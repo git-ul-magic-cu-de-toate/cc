@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-courses-deployment
+  labels:
+    app: cloud-courses
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-courses
+  template:
+    metadata:
+      labels:
+        app: cloud-courses
+    spec:
+      containers:
+      - name: cloud-courses
+        image: cloud-courses:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+        env:
+        - name: URL
+          value: "http://localhost"
+        - name: BASE_URL
+          value: "/cloud-courses/"
+        livenessProbe:
+          httpGet:
+            path: "/cloud-courses/"
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-courses-service
+spec:
+  selector:
+    app: cloud-courses
+  ports:
+  - protocol: TCP
+    port: 8081
+    targetPort: 3000
+  type: NodePort

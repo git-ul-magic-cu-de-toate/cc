@@ -1,0 +1,1 @@
+kubectl describe deployment cloud-courses-deployment
